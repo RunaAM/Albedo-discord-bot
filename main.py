@@ -8,7 +8,7 @@ os.system("pip install -U git+https://github.com/Pycord-Development/pycord")
 intents = discord.Intents(messages=True,guilds = True,reactions=True,members=True,presences = True)
 
 
-status = cycle(['Made by runa#3672','a! will no longer be used'])
+status = cycle(['Made by runa#3672','yes, i am inside fnaf universe'])
 
 icon = " "
 
@@ -54,7 +54,7 @@ async def level_up(users, user, message):
   experience = users[f'{user.id}']["experience"]
   lvl_start = users[f'{user.id}']["level"]
   lvl_end = int(experience ** (1 / 4))
-  if lvl_start < lvl_end:
+  if lvl_start < lvl_end and lvl_end <3:
     await message.channel.send(f':tada: {user.mention} has reached level {lvl_end}. Congrats! :tada:')
     users[f'{user.id}']["level"] = lvl_end
  

@@ -6,7 +6,7 @@ import json
 class Money(commands.Cog):
 	def __init__(self, client):
 		self.client = client
-	@commands.slash_command(name="balance", description="shows balance")
+	@commands.slash_command(guild_ids =[968887343119482940],name="balance", description="shows balance")
 	async def balance(self,ctx):
 		with open('/home/runner/Albedo-bot/data/users.json', 'r') as f:
 			users = json.load(f)
@@ -27,7 +27,7 @@ class Money(commands.Cog):
 		with open('/home/runner/Albedo-bot/data/users.json', 'w') as f:
 			json.dump(users, f)
 
-	@commands.slash_command(name="inventory", description="shows inventory")
+	@commands.slash_command(guild_ids=[968887343119482940],name="inventory", description="shows inventory")
 	async def inventory(self,ctx):
 		with open('/home/runner/Albedo-bot/data/users.json', 'r') as f:
 			users = json.load(f)

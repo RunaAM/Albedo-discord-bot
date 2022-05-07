@@ -105,7 +105,7 @@ class wish(commands.Cog):
 			print("element adaugat")
 		with open('data/users.json', 'w') as f:
 			json.dump(users, f)
-
+			
 		if(color == 1):
 			embed.set_thumbnail(url=thumb)
 		embed.set_author(name='Albedo')
