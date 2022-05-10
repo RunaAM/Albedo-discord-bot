@@ -4,11 +4,13 @@ from itertools import cycle
 from datetime import datetime
 from keep_alive import keep_alive
 import json
+import wavelink
 os.system("pip install -U git+https://github.com/Pycord-Development/pycord")
+
 intents = discord.Intents(messages=True,guilds = True,reactions=True,members=True,presences = True)
 
 
-status = cycle(['Made by runa#3672','yes, i am inside fnaf universe'])
+status = cycle(['Made by runa#3672','Yes, i am inside fnaf universe'])
 
 icon = " "
 
@@ -47,15 +49,15 @@ async def add_experience(users, user):
         users[f'{user.id}'] = {}
         users[f'{user.id}']['experience'] = 0
         users[f'{user.id}']['level'] = 0
-  users[f'{user.id}']['experience'] += 6
+  users[f'{user.id}']['experience'] += 3
   
  
 async def level_up(users, user, message):
   experience = users[f'{user.id}']["experience"]
   lvl_start = users[f'{user.id}']["level"]
-  lvl_end = int(experience ** (1 / 4))
+  lvl_end = int(experience ** (1 / 2))
   if lvl_start < lvl_end and lvl_end <3:
-    await message.channel.send(f':tada: {user.mention} has reached level {lvl_end}. Congrats! :tada:')
+    #await message.channel.send(f':tada: {user.mention} has reached level {lvl_end}. Congrats! :tada:')
     users[f'{user.id}']["level"] = lvl_end
  
 @client.slash_command(name='ping',description="pinging")
@@ -68,9 +70,25 @@ async def newping(ctx):
 @client.event
 async def on_ready():
 	change_status.start()
+	client.loop.create_task(node_connect())
 	print("Albedo is ready")
+	
+async def node_connect():
+	await client.wait_until_ready()
+	await wavelink.NodePool.create_node(bot=client,host = 'lavalinkinc.ml',port=443, password='incognito',https=True)
+@client.event
+async def on_wavelink_node_ready(node: wavelink.Node):
+	print(f'Node {node.identifier}is ready!')
 
-
+@client.slash_command(guild_ids=[968887343119482940],name = 'play', description='Play song')	
+async def play(ctx:commands.Context, *,search: wavelink.YouTubeTrack):
+	if not ctx.voice_client:
+		vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
+	elif not ctx.author.voice.client:
+		await ctx.respond("first join a voice channel")
+	else:
+		vc: wavelink.Player = ctx.voice_client
+	vc.play(search)
 @client.command()
 async def load(ctx, extension):
 	client.load_extension(f'cogs.{extension}')

@@ -41,35 +41,46 @@ class Marry(commands.Cog):
 		if(time.time() - users[f'{ctx.author.id}']['marry']["time"] >=3600):
 			users[f'{ctx.author.id}']['marry']["rolls"] = roll_limit
 			users[f'{ctx.author.id}']['marry']["time"] = time.time()
+		
 		if(users[f'{ctx.author.id}']['marry']["rolls"] >0  ):
-			number = random.randint(0,length)
+			number = random.randint(0,length-1)
 			users[f'{ctx.author.id}']['marry']["rolls"] -=1
+			embed=discord.Embed(title="Albedo's tinder", color=0xd24b4b)
+			embed.set_image(url=character_photos[number])
+			embed.add_field(name=character_names[number], 				value="wow", inline=True)
+			length = len(character_names)
+			button = Button(label="Claim",style=discord.ButtonStyle.green)
+			async def button_callback(interaction):
+				with open('/home/runner/Albedo-bot/data/characters.json', 'r') as f:
+					chars = json.load(f)
+				if ctx.author.id == interaction.user.id:
+					chars[f"{character_names[number]}"]['owner'] = ctx.author.id
+					await interaction.response.send_message("Claimed")
+				else:
+					await interaction.response.send_message("No stealing fmm")
+				with open('/home/runner/Albedo-bot/data/characters.json', 'w') as f:
+					json.dump(chars, f)
+				
+			with open('/home/runner/Albedo-bot/data/characters.json', 'r') as f:
+					chars = json.load(f)
+			if chars[f"{character_names[number]}"]['owner']== 0:
+				button.callback = button_callback
+				view = View()
+				view.add_item(button)
+				await ctx.respond(embed=embed,view = view)
+			else:
+				embed.set_footer(text=f"Owned by {ctx.bot.get_user(int(chars[f'{character_names[number]}']['owner']))}")
+				await ctx.respond(embed=embed)
+		else:
+			seconds = int(3600-(time.time()-users[f'{ctx.author.id}']['marry']['time']))
+			minutes = int(seconds/60)
+			seconds = seconds - minutes*60
+			await ctx.respond(f"wait for {minutes} minutes and {seconds} seconds")
 		with open('data/users.json', 'w') as f:
 			json.dump(users, f)
 		
 			
 		
-		embed=discord.Embed(title="Albedo's tinder", color=0xd24b4b)
-		embed.set_image(url=character_photos[number])
-		embed.add_field(name=character_names[number], 				value="wow", inline=True)
-		length = len(character_names)
-		button = Button(label="Claim",style=discord.ButtonStyle.green)
-		async def button_callback(interaction):
-			with open('/home/runner/Albedo-bot/data/characters.json', 'r') as f:
-				users = json.load(f)
-			if ctx.author.id == interaction.user.id:
-				users[f"{character_names[number]}"]['owner'] = ctx.author.id
-			with open('/home/runner/Albedo-bot/data/characters.json', 'w') as f:
-				json.dump(users, f)
-			await interaction.response.send_message("Claimed")
-		with open('/home/runner/Albedo-bot/data/characters.json', 'r') as f:
-				users = json.load(f)
-		if users[f"{character_names[number]}"]['owner']== 0:
-			button.callback = button_callback
-			view = View()
-			view.add_item(button)
-			await ctx.respond(embed=embed,view = view)
-		else:
-			await ctx.respond(embed=embed,view = view)
+		
 def setup(client):
 	client.add_cog(Marry(client))

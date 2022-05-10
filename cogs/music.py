@@ -2,7 +2,7 @@ import discord
 import youtube_dl
 import pafy
 from discord.ext import commands
-
+import wavelink
 class Player(commands.Cog):
 	def __init__(self,client):
 		self.client = client
