@@ -40,92 +40,90 @@ class wish(commands.Cog):
 		pulled_name.append(charstandard[char_rand])
 		pulled_id.append("4")
 		pulled_icon.append(charstdicon[char_rand])
-		for i in range(1,10):
-			chance = random.randint(1,90)
-			if(chance%37==0):
-				weapon = random.randint(1,8)
-				if(fifty ==1):
-					weapon =1
-				if(weapon ==8):
-					char_rand = random.randint(0,len(fiveweaponstand)-1)
-					pulled_name.append(fiveweaponstand[char_rand])
-					pulled_id.append(5)
-					#pulled_icon.append(fivewicon[char_rand])
-					thumb = fivewicon[char_rand]
-					fifty=1
-				elif(weapon <8 and weapon >5):
-					char_rand = random.randint(0,len(fivestandard)-1)
-					pulled_name.append(fivestandard[char_rand])
-					pulled_id.append(5)
-					#pulled_icon.append(fivestdicon[char_rand])
-					thumb = fivestdicon[char_rand]
-				else:
-					pulled_name.append(fiveevent[-1])
-					pulled_id.append(5)
-					#pulled_icon.append(fiveeventicon[-1])
-					thumb = fiveeventicon[-1]
-					fifty=0
-			elif(chance%10==0):
-				character = random.randint(1,2)
-				pulled_id.append(4)
-				if(character ==1):
-					char_rand = random.randint(0,len(charstandard)-1)
-					pulled_name.append(charstandard[char_rand]) 
-					#pulled_icon.append(charstdicon[char_rand])
-				else:
-					char_rand = random.randint(0,len(fourevent)-1)
-					pulled_name.append(fourevent[char_rand]) 
-					#pulled_icon.append(foureicon[char_rand])
-			else:
-				weapon_rand = random.randint(0,len(weaponstandard)-1)
-				pulled_name.append(weaponstandard[weapon_rand])
-				pulled_id.append(3)
-				#pulled_icon.append(weaponstdicon[weapon_rand])
-		color = 0
-		for id in pulled_id:
-			if(id == 5):
-				color = 1
-		if(color == 1):
-			embed = discord.Embed(colour=discord.Color.gold())
-			print("culoare galben")
-		else:
-			embed = discord.Embed(colour=discord.Color.purple())
-			print("culoare mov")
-		print(pulled_name)
 		with open('/home/runner/Albedo-bot/data/users.json', 'r') as f:
 			users = json.load(f)
-		if not 'Inventory' in users[f'{ctx.author.id}']:
-			users[f'{ctx.author.id}']['Inventory']={}
-		for x in range(1,len(pulled_name)):
-			embed.add_field(name=f'{pulled_id[x]} star',value=pulled_name[x],inline=True)
-			if not f'{pulled_name[x]}' in users[f'{ctx.author.id}']['Inventory']:
-				users[f'{ctx.author.id}']['Inventory'][f'{pulled_name[x]}'] =1
+		if(users[f'{ctx.author.id}']['money']>=5):
+			users[f'{ctx.author.id}']['money']-=5;
+			with open('/home/runner/Albedo-bot/data/users.json', 'w') as f:
+				json.dump(users, f)
+			for i in range(1,10):
+				chance = random.randint(1,90)
+				if(chance%37==0):
+					weapon = random.randint(1,8)
+					if(fifty ==1):
+						weapon =1
+					if(weapon ==8):
+						char_rand = random.randint(0,len(fiveweaponstand)-1)
+						pulled_name.append(fiveweaponstand[char_rand])
+						pulled_id.append(5)
+						thumb = fivewicon[char_rand]
+						fifty=1
+					elif(weapon <8 and weapon >5):
+						char_rand = random.randint(0,len(fivestandard)-1)
+						pulled_name.append(fivestandard[char_rand])
+						pulled_id.append(5)
+						thumb = fivestdicon[char_rand]
+					else:
+						pulled_random = random.randint(0,len(fiveevent)-1)
+						pulled_name.append(fiveevent[pulled_random])
+						pulled_id.append(5)
+						thumb = fiveeventicon[pulled_random ]
+						fifty=0
+				elif(chance%10==0):
+					character = random.randint(1,2)
+					pulled_id.append(4)
+					if(character ==1):
+						char_rand = random.randint(0,len(charstandard)-1)
+						pulled_name.append(charstandard[char_rand]) 
+					else:
+						char_rand = random.randint(0,len(fourevent)-1)
+						pulled_name.append(fourevent[char_rand]) 
+				else:
+					weapon_rand = random.randint(0,len(weaponstandard)-1)
+					pulled_name.append(weaponstandard[weapon_rand])
+					pulled_id.append(3)
+			color = 0
+			for id in pulled_id:
+				if(id == 5):
+					color = 1
+			if(color == 1):
+				embed = discord.Embed(colour=discord.Color.gold())
 			else:
-				users[f'{ctx.author.id}']['Inventory'][f'{pulled_name[x]}']+=1
-			print("element adaugat")
-		with open('data/users.json', 'w') as f:
-			json.dump(users, f)
+				embed = discord.Embed(colour=discord.Color.purple())
+			with open('/home/runner/Albedo-bot/data/users.json', 'r') as f:
+				users = json.load(f)
+			if not 'Inventory' in users[f'{ctx.author.id}']:
+				users[f'{ctx.author.id}']['Inventory']={}
+			for x in range(1,len(pulled_name)):
+				embed.add_field(name=f'{pulled_id[x]} star',value=pulled_name[x],inline=True)
+				if not f'{pulled_name[x]}' in users[f'{ctx.author.id}']['Inventory'] :
+					if int(pulled_id[x]) >3:
+						users[f'{ctx.author.id}']['Inventory'][f'{pulled_name[x]}'] =1
+				else:
+					if int(pulled_id[x]) >3:
+						users[f'{ctx.author.id}']['Inventory'][f'{pulled_name[x]}']+=1
+			with open('data/users.json', 'w') as f:
+				json.dump(users, f)
+				
+			if(color == 1):
+				embed.set_thumbnail(url=thumb)
+			embed.set_author(name="Albedo's wish")
+			embed.timestamp = datetime.utcnow()
+	
+			#for x in range(1,len(pulled_id)):
+			#	if(x >3):
+					#with open('data/users.json', 'r') as f:
+					#	users = json.load(f)
+			#		users[ctx.message.author.id][pulled_name[a]] +=1
+					#with open('data/users.json', 'w') as f:
+					#	json.dump(users, f)
+			#	a+=1
 			
-		if(color == 1):
-			embed.set_thumbnail(url=thumb)
-		embed.set_author(name='Albedo')
-		embed.timestamp = datetime.utcnow()
-
-		#for x in range(1,len(pulled_id)):
-		#	if(x >3):
-				#with open('data/users.json', 'r') as f:
-				#	users = json.load(f)
-		#		users[ctx.message.author.id][pulled_name[a]] +=1
-				#with open('data/users.json', 'w') as f:
-				#	json.dump(users, f)
-		#	a+=1
-		
-		if(color ==1):
-			await ctx.respond(file=discord.File(f'/home/runner/Albedo-bot/media/wish.mov'))
-
+			await ctx.respond(embed = embed)
 		else:
-			await ctx.respond(file=discord.File(f'/home/runner/Albedo-bot/media/w1sh.mov'))
-		time.sleep(10)
-		await ctx.send( embed=embed)	
+			embed = discord.Embed(colour=discord.Color.red())
+			embed.add_field(name='You need at least 5 coins.',value = "You can get more coins by just messaging and using /daily, or when you level up",inline=True)
+			embed.set_author(name="Albedo's wish")
+			await ctx.respond( embed=embed)
 def setup(client):
 	client.add_cog(wish(client))

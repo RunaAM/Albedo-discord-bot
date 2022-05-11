@@ -10,7 +10,7 @@ os.system("pip install -U git+https://github.com/Pycord-Development/pycord")
 intents = discord.Intents(messages=True,guilds = True,reactions=True,members=True,presences = True)
 
 
-status = cycle(['Made by runa#3672','Yes, i am inside fnaf universe'])
+status = cycle(['Made by runa#3672','Yes, i am inside fnaf universe','every day i am closer to my goals'])
 
 icon = " "
 
@@ -53,16 +53,25 @@ async def add_experience(users, user):
   
  
 async def level_up(users, user, message):
-  experience = users[f'{user.id}']["experience"]
-  lvl_start = users[f'{user.id}']["level"]
-  lvl_end = int(experience ** (1 / 2))
-  if lvl_start < lvl_end and lvl_end <3:
-    #await message.channel.send(f':tada: {user.mention} has reached level {lvl_end}. Congrats! :tada:')
-    users[f'{user.id}']["level"] = lvl_end
+	experience = users[f'{user.id}']["experience"]
+	lvl = users[f'{user.id}']["level"]
+	if(experience >=100*lvl):
+		lvl+=1
+		users[f'{user.id}']["level"] = lvl
+		await message.channel.send(f':tada: {user.mention} has reached level {lvl}. Congrats! :tada:')
+		users[f'{user.id}']["experience"] -=100*lvl
+		users[f'{user.id}']['money'] +=50
  
 @client.slash_command(name='ping',description="pinging")
-async def newping(ctx):
-	embed = discord.Embed(colour=discord.Color.green())
+async def ping(ctx):
+	latency = round(client.latency*1000)
+	if(latency <=40):
+		color = discord.Color.green()
+	elif latency <=80:
+		color = discord.Color.yellow()
+	else:
+		color = discord.Color.red()
+	embed = discord.Embed(colour=color)
 	embed.add_field(name='Ping',value=f' {round(client.latency * 1000)}ms',inline=True)
 	embed.set_author(name='Albedo')
 	embed.timestamp = datetime.utcnow()
@@ -79,7 +88,9 @@ async def node_connect():
 @client.event
 async def on_wavelink_node_ready(node: wavelink.Node):
 	print(f'Node {node.identifier}is ready!')
-
+@client.slash_command(guild_ids=[968887343119482940],name = 'test', description='Play song')
+async def test(ctx,test):
+	print(test)
 @client.slash_command(guild_ids=[968887343119482940],name = 'play', description='Play song')	
 async def play(ctx:commands.Context, *,search: wavelink.YouTubeTrack):
 	if not ctx.voice_client:
